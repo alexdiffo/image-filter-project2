@@ -1,5 +1,19 @@
 
+
+# Specifies intentionally untracked files to ignore when using Git
+
+
+www/
+node_modules/
+tmp/
+
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+aws-elastic-beanstalk-cli-setup
+
+
+#Environnement variables
+.env
+
