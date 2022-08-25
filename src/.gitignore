@@ -14,6 +14,6 @@ tmp/
 aws-elastic-beanstalk-cli-setup
 
 
-#Environnement variables
+#Environnement variable
 .env
 
