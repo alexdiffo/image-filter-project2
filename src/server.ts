@@ -1,8 +1,10 @@
 import express from 'express';
+import { Application, Request, Response, NextFunction, Errback } from "express";
 import bodyParser from 'body-parser';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
 import { Auth } from './auth';
 import { requireAuth } from './auth';
+
 
 (async () => {
 
@@ -33,23 +35,23 @@ import { requireAuth } from './auth';
 
   /**************************************************************************** */
 
-  app.get("/filteredimage", requireAuth, async (req, res) => {
-    let { image_url } = req.query;
-    const filteredpath = await filterImageFromURL(image_url);
+  app.get("/filteredimage", requireAuth, async (req: Request, res: Response, next: NextFunction) => {
 
+    try {
+      let filteredpath: string = await filterImageFromURL(req.query.image_url) as string;
+      if (!filteredpath) {
+        return res.status(400)
+          .send(`image not found`);
+      }
 
+      return res.status(200)
+        .sendFile(filteredpath, () => {
+          deleteLocalFiles([filteredpath]);
+        });
 
-    if (!filteredpath) {
-      return res.status(400)
-        .send(`image not found`);
+    } catch (e) {
+      return next(e);
     }
-
-    return res.status(200)
-      .sendFile(filteredpath, () => {
-        deleteLocalFiles([filteredpath]);
-      });
-
-
 
   });
 
@@ -61,8 +63,8 @@ import { requireAuth } from './auth';
 
   // Root Endpoint
   // Displays a simple message to the user
-  app.get("/", async (req, res) => {
-    res.send("try GET /filteredimage?image_url={{}}")
+  app.get("/", async (req: Request, res: Response) => {
+    res.send("Welcome to Alex image filter App. try GET /filteredimage?image_url={{}} . Don't forget to start by requiring authorization token through the url : http://image-filter-alex-dev-dev.us-east-1.elasticbeanstalk.com/auth ")
   });
 
 
